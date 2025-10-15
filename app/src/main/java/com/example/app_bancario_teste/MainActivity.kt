@@ -10,35 +10,44 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.app_bancario_teste.presentation.ui.login.LoginScreen
-import com.example.app_bancario_teste.ui.theme.App_bancario_testeTheme
+import com.example.app_bancario_teste.presentation.ui.payment.PaymentScreen
+import com.example.app_bancario_teste.ui.theme.AppBancarioTesteTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            App_bancario_testeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            val navController = rememberNavController()
+            AppBancarioTesteTheme {
+
+                NavHost(
+                    navController = navController,
+                    startDestination = "/login"
+                ) {
+                    composable("/login") {
+                        LoginScreen(
+                            onLogin = {
+                                navController.navigate("/payments")
+                            }
+                        )
+                    }
+
+                    composable("/payments") {
+                        PaymentScreen(
+                            onBackTap = {
+                                navController.popBackStack()
+                            }
+                        )
+                    }
                 }
+
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    LoginScreen()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    App_bancario_testeTheme {
-        Greeting("Android")
-    }
-}
