@@ -19,14 +19,13 @@ import com.example.app_bancario_teste.ui.theme.AppBancarioTesteTheme
 @Composable
 fun AppTextField(
     modifier: Modifier = Modifier,
-    errorText: String,
+    errorText: String? = null,
     label: String,
     value: String,
     isError: Boolean,
     isPassword : Boolean = false,
     onChange: (String) -> Unit
 ) {
-
 
     TextField(
         modifier = modifier
@@ -36,17 +35,18 @@ fun AppTextField(
         maxLines = 1,
         onValueChange = onChange,
         visualTransformation = if (isPassword) PasswordVisualTransformation()  else VisualTransformation.None ,
-        label = { Text(label) },
+        placeholder = { Text(label) },
         shape = RoundedCornerShape(15.dp),
         colors = TextFieldDefaults.colors(
+            focusedLabelColor = Color(0xff5C738A),
             disabledIndicatorColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             errorIndicatorColor = Color.Transparent,
-            errorLabelColor = Color.Red
+            errorLabelColor = Color.Red,
         ),
         supportingText = {
-            if (isError) {
+            if (isError && errorText != null) {
                 Text(errorText)
             }
         },

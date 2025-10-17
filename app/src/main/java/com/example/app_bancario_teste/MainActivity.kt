@@ -10,13 +10,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.app_bancario_teste.presentation.ui.login.AuthViewModel
 import com.example.app_bancario_teste.presentation.ui.login.LoginScreen
 import com.example.app_bancario_teste.presentation.ui.payment.PaymentScreen
 import com.example.app_bancario_teste.ui.theme.AppBancarioTesteTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,15 +28,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             AppBancarioTesteTheme {
-
                 NavHost(
                     navController = navController,
                     startDestination = "/login"
                 ) {
                     composable("/login") {
                         LoginScreen(
+                          authViewModel = hiltViewModel<AuthViewModel>(),
                             onLogin = {
-                                navController.navigate("/payments")
+                                navController.navigate("/payments",)
                             }
                         )
                     }
