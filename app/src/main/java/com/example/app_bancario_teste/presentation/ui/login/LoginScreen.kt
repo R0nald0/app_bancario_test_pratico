@@ -1,5 +1,7 @@
 package com.example.app_bancario_teste.presentation.ui.login
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +19,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,54 +43,82 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_bancario_teste.R
+import com.example.app_bancario_teste.domain.model.Customer
 import com.example.app_bancario_teste.presentation.components.AppBarCustom
 import com.example.app_bancario_teste.presentation.components.AppTextField
 import com.example.app_bancario_teste.presentation.components.LoadingOverlay
+import com.example.app_bancario_teste.presentation.components.SnackBarCustom
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
     authViewModel: AuthViewModel = viewModel(),
-    onLogin: () -> Unit
+    onSuccessLogin: (Customer) -> Unit
 ) {
     val state by authViewModel.loginUi.collectAsStateWithLifecycle()
+    val resultStateLogin by authViewModel.resultLoginState.collectAsStateWithLifecycle(InitialState())
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
 
-    Scaffold(
-        topBar = { AppBarCustom(title = "Login") }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-
+    ) {
+        Scaffold(
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState) { data ->
+                    SnackBarCustom(modifier = modifier, message = data.visuals.message)
+                }
+            },
+            topBar = { AppBarCustom(title = "Login") }
+        ) { innerPadding ->
             LoginContent(
-                modifier = modifier,
+                modifier = modifier.padding(innerPadding),
                 state = state,
-                onLogin = onLogin,
+                onLogin = authViewModel::login,
                 authViewModel = authViewModel
             )
+        }
 
-            LoadingOverlay(isVisible = state.loading)
+        when (resultStateLogin) {
+            is Error -> {
+                LoadingOverlay(isVisible = false)
+                state.message?.let {
+                    LaunchedEffect(state.message) {
+                        snackbarHostState.showSnackbar(it)
+                    }
+                }
+            }
+
+            is Loading -> {
+                LoadingOverlay(isVisible = true)
+            }
+
+            is Success -> {
+                LoadingOverlay(isVisible = false)
+                onSuccessLogin((resultStateLogin as Success).customer)
+            }
+
+            is InitialState -> {}
         }
     }
 }
+
 
 @Composable
 private fun LoginContent(
     modifier: Modifier = Modifier,
     state: UiLoginState,
-    onLogin: () -> Unit,
+    onLogin: (String, String) -> Unit,
     authViewModel: AuthViewModel
 ) {
     val scrollState = rememberScrollState()
+    val focusManager = LocalFocusManager.current
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
-    LaunchedEffect(state.success) {
-        if (state.success) onLogin()
-    }
 
     Column(
         modifier = modifier
@@ -131,7 +165,10 @@ private fun LoginContent(
         )
 
         ElevatedButton(
-            onClick = { authViewModel.login(email, password) },
+            onClick = {
+                focusManager.clearFocus()
+                onLogin(email, password)
+            },
             enabled = state.isEmailIValidate?.isEmpty() == true && state.isPasswordIValidate?.isEmpty() == true,
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier

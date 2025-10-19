@@ -4,12 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.app_bancario_teste.presentation.ui.login.AuthViewModel
 import com.example.app_bancario_teste.presentation.ui.login.LoginScreen
 import com.example.app_bancario_teste.presentation.ui.payment.PaymentScreen
+import com.example.app_bancario_teste.presentation.ui.payment.PaymentsViewModel
 import com.example.app_bancario_teste.ui.theme.AppBancarioTesteTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,7 +30,7 @@ class MainActivity : ComponentActivity() {
                     composable("/login") {
                         LoginScreen(
                           authViewModel = hiltViewModel<AuthViewModel>(),
-                            onLogin = {
+                            onSuccessLogin = {customer ->
                                 navController.navigate("/payments",)
                             }
                         )
@@ -43,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
                     composable("/payments") {
                         PaymentScreen(
+                            paymentsViewModel = hiltViewModel<PaymentsViewModel>(),
                             onBackTap = {
                                 navController.popBackStack()
                             }

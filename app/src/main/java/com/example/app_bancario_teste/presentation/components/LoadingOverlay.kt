@@ -21,7 +21,7 @@ fun LoadingOverlay(isVisible: Boolean) {
                 .background(Color.Black.copy(alpha = 0.5f)),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(color = Color.Gray)
+            CircularProgressIndicator(color = Color.Black)
         }
     }
 }
@@ -29,6 +29,6 @@ fun LoadingOverlay(isVisible: Boolean) {
 @Composable
 private fun LoginScreenPrev() {
     AppBancarioTesteTheme {
-        LoginScreen(onLogin = {})
+        LoginScreen(onSuccessLogin = {})
     }
 }

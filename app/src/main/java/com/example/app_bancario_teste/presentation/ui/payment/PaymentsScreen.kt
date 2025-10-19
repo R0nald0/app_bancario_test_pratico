@@ -1,53 +1,59 @@
 package com.example.app_bancario_teste.presentation.ui.payment
 
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDefaults
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.app_bancario_teste.domain.model.AccountPayment
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_bancario_teste.presentation.components.AppBarCustom
+import com.example.app_bancario_teste.presentation.components.LoadingOverlay
+import com.example.app_bancario_teste.presentation.components.SnackBarCustom
 import com.example.app_bancario_teste.presentation.ui.payment.component.AccountItem
+import com.example.app_bancario_teste.presentation.ui.payment.component.DetailPayments
 import com.example.app_bancario_teste.ui.theme.AppBancarioTesteTheme
+import kotlinx.coroutines.launch
 
 @Composable
-fun PaymentScreen(modifier: Modifier = Modifier, onBackTap: () -> Unit) {
-    val payments = listOf(
-        AccountPayment("R$ 120,00", "001", "10/10/2025"),
-        AccountPayment("R$ 98,50", "002", "11/11/2025"),
-        AccountPayment("R$ 140,75", "003", "12/12/2025"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-        AccountPayment("R$ 85,30", "004", "13/01/2026"),
-    )
+fun PaymentScreen(
+    modifier: Modifier = Modifier,
+    paymentsViewModel: PaymentsViewModel = viewModel<PaymentsViewModel>(), onBackTap: () -> Unit
+) {
+    val state by paymentsViewModel.paymentUiState.collectAsStateWithLifecycle()
 
-    Scaffold(
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+    if (state.isLoading) LoadingOverlay(true)
+    else Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                SnackBarCustom(modifier = modifier, message = data.visuals.message)
+            }
+        },
         topBar = {
             AppBarCustom(
                 title = "Pagamentos",
@@ -56,9 +62,8 @@ fun PaymentScreen(modifier: Modifier = Modifier, onBackTap: () -> Unit) {
             )
         }
     ) { innerPadding ->
-
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 8.dp, vertical = 16.dp),
@@ -66,35 +71,35 @@ fun PaymentScreen(modifier: Modifier = Modifier, onBackTap: () -> Unit) {
             horizontalAlignment = Alignment.Start,
         ) {
 
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
-                text ="Detalhes do Pagamentos", style = MaterialTheme.typography.titleLarge)
-            Column (
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            ){
-                Text("Cliente: Marina Silva", style = MaterialTheme.typography.labelMedium)
-                Text("Agência: 1234 | Conta :5678-0", style = MaterialTheme.typography.labelSmall)
-            }
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text="Saldo: R$ 1.5000,00", style = MaterialTheme.typography.bodyMedium)
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
-               text = "Contas pagas", style = MaterialTheme.typography.titleLarge
-            )
-
             LazyColumn(
                 modifier = Modifier.weight(1f)
             ) {
-                items(payments) { payment ->
+                item {
+                    state.customer?.let { customer ->
+                        DetailPayments(modifier = modifier, customer)
+                    }
+
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
+                        text = "Contas pagas",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+                items(state.payments, key = { it.id }) { payment ->
                     AccountItem(payment = payment)
                 }
-
             }
-
-
         }
     }
+
+
+    LaunchedEffect(state.message) {
+        state.message?.let {
+            snackbarHostState.showSnackbar(it)
+        }
+    }
+
+
 }
 
 @Preview
@@ -106,3 +111,4 @@ private fun PaymentsScreenPrev() {
         )
     }
 }
+
