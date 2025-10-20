@@ -4,12 +4,13 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.example.app_bancario_teste.core.constants.AppConstants
 import com.example.app_bancario_teste.core.extension.dataStore
 import com.example.app_bancario_teste.data.local.dao.AppDatabase
-import com.example.app_bancario_teste.data.local.service.PreferenceService
+import com.example.app_bancario_teste.data.local.dao.PaymentDao
 import com.example.app_bancario_teste.data.local.service.impl.PreferencesServiceImpl
+import com.example.app_bancario_teste.data.remote.service.AuthService
+import com.example.app_bancario_teste.data.remote.service.PaymentsService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,6 +39,11 @@ object DataModule {
 
     @Provides
     @Singleton
+    fun providePaymentDao(appDatabase: AppDatabase) : PaymentDao{
+        return appDatabase.paymentDao()
+    }
+    @Provides
+    @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase{
           return Room.databaseBuilder(
               context = context,
@@ -53,7 +59,17 @@ object DataModule {
             .baseUrl(AppConstants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+    @Provides
+    @Singleton
+    fun provideAuthService(retrofit: Retrofit) : AuthService{
+         return  retrofit.create(AuthService::class.java)
+    }
 
+    @Provides
+    @Singleton
+    fun providesPaymentService(retrofit: Retrofit) : PaymentsService{
+        return  retrofit.create(PaymentsService::class.java)
     }
 
 }

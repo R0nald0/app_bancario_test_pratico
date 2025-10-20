@@ -1,6 +1,5 @@
 package com.example.app_bancario_teste.domain.usecase
 
-import com.example.app_bancario_teste.data.repository.AuthRepositoryImpl
 import com.example.app_bancario_teste.domain.repository.AuthRepository
 import javax.inject.Inject
 

@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.app_bancario_teste.domain.model.AccountPayment
-import com.example.app_bancario_teste.ui.theme.AppBancarioTesteTheme
+import com.example.app_bancario_teste.presentation.theme.AppBancarioTesteTheme
 import com.example.app_bancario_teste.ui.theme.BackGroundColor
 
 @Composable

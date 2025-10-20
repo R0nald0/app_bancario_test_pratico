@@ -1,6 +1,5 @@
 package com.example.app_bancario_teste.data.local.service
 
-import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.flow.Flow
 

@@ -2,25 +2,23 @@ package com.example.app_bancario_teste.data.repository
 
 import android.util.Log
 import com.example.app_bancario_teste.core.exception.RepositoryException
-import com.example.app_bancario_teste.core.exception.UserNotFound
-import com.example.app_bancario_teste.data.local.dao.AppDatabase
+import com.example.app_bancario_teste.data.local.dao.PaymentDao
 import com.example.app_bancario_teste.data.local.entity.PaymentEntity
 import com.example.app_bancario_teste.data.remote.service.PaymentsService
 import com.example.app_bancario_teste.domain.model.AccountPayment
 import com.example.app_bancario_teste.domain.repository.PaymentRepository
 import retrofit2.HttpException
-import retrofit2.Retrofit
 import javax.inject.Inject
 
 class PaymentsRepositoryImpl @Inject constructor(
-    private val restClient: Retrofit,
-    private val appDatabase: AppDatabase,
+    private val paymentsService: PaymentsService,
+    private val paymentDao: PaymentDao,
 ) : PaymentRepository {
     override suspend fun getPayments(): List<AccountPayment> {
         try {
-            val response = restClient.create(PaymentsService::class.java).getPayments()
+            val response = paymentsService.getPayments()
             if (!response.isSuccessful) {
-                throw RepositoryException("Erro ao busca dados de pagametos")
+                throw RepositoryException("Erro ao busca dados de pagamentos")
             }
             val payments = response.body()
             if (payments.isNullOrEmpty()) {
@@ -28,7 +26,7 @@ class PaymentsRepositoryImpl @Inject constructor(
             }
 
             val paymentEntity = payments.map { PaymentEntity(it) }
-            appDatabase.paymentDao().savePayment(*paymentEntity.toTypedArray())
+            paymentDao.savePayment(*paymentEntity.toTypedArray())
 
             return payments
 

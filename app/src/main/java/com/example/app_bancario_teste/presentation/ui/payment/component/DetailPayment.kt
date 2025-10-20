@@ -1,6 +1,8 @@
 package com.example.app_bancario_teste.presentation.ui.payment.component
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -9,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.app_bancario_teste.domain.model.Customer
-import com.example.app_bancario_teste.ui.theme.AppBancarioTesteTheme
+import com.example.app_bancario_teste.presentation.theme.AppBancarioTesteTheme
 
 @Composable
 fun DetailPayments(modifier: Modifier = Modifier, customer: Customer) {
@@ -17,13 +19,16 @@ fun DetailPayments(modifier: Modifier = Modifier, customer: Customer) {
 
     Text(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 20.dp),
-        text ="Detalhes do Pagamentos", style = MaterialTheme.typography.titleLarge)
+        text ="Detalhes do Pagamento", style = MaterialTheme.typography.titleLarge)
     Column (
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+
     ){
-        Text(customerName, style = MaterialTheme.typography.labelMedium)
-        Text("Agência: $branchNumber | Conta :$accountNumber", style = MaterialTheme.typography.labelSmall)
+        Text("Cliente: $customerName", style = MaterialTheme.typography.labelMedium)
+        Text("Agência: $branchNumber | Conta: $accountNumber", style = MaterialTheme.typography.labelSmall)
     }
+    Spacer(modifier = Modifier.height(16.dp))
     Text(
         modifier = Modifier.padding(horizontal = 16.dp),
         text="Saldo: R$ $checkingAccountBalance", style = MaterialTheme.typography.bodyMedium)

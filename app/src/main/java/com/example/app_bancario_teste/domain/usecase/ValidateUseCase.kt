@@ -16,12 +16,12 @@ class ValidateUseCase {
         }
         if (!password.any{ it.isLetter()}){
             error.put(key = "password" ,
-                value = "Senha precisa ter o pelomenos 1 uma letra"
+                value = "Senha precisa conter no mínimo 1 uma letra"
             )
         }
         if (!password.any{ it.isDigit()}){
             error.put(key = "password" ,
-                value = "Senha precisa ter o pelo menos 1 um número"
+                value = "Senha precisa conter no mínimo 1 um número"
             )
         }
 

@@ -1,9 +1,7 @@
 package com.example.app_bancario_teste.data.repository
 
 import android.util.Log
-import androidx.datastore.core.DataStore
 import androidx.datastore.core.IOException
-import androidx.datastore.preferences.core.Preferences
 import com.example.app_bancario_teste.core.constants.AppConstants
 import com.example.app_bancario_teste.core.exception.RepositoryException
 import com.example.app_bancario_teste.core.exception.UserNotFound
@@ -16,26 +14,24 @@ import com.google.gson.JsonIOException
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
-import retrofit2.Retrofit
-import java.lang.Exception
 import javax.inject.Inject
 
 
 class AuthRepositoryImpl @Inject constructor(
-    private val restClient: Retrofit,
+    private val authService: AuthService,
     private val preferences: PreferenceService
 
 ) : AuthRepository {
     override suspend fun getUser(): Customer {
         try {
-            val response = restClient.create(AuthService::class.java).getUser()
+            val response = authService.getUser()
             if (!response.isSuccessful) throw UserNotFound()
 
             val customer = response.body()
             if (customer.isNullOrEmpty()) {
                 throw UserNotFound()
             }
-            saveUserOnPreferences(customer)
+            saveUserOnPreferences(customer.first())
             return customer.first()
         } catch (httpException: HttpException) {
             Log.e("repository", "getUser: ${httpException.message} ", httpException)
@@ -45,9 +41,9 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun saveUserOnPreferences(customer: List<Customer>) {
+    private suspend fun saveUserOnPreferences(customer: Customer) {
         try {
-            val customerJson = Gson().toJson(customer.first())
+            val customerJson = Gson().toJson(customer)
             preferences.saveOnPreferenceStore(
             value = customerJson,
             AppConstants.CUSTOMER_PREFERENCE_KEY

@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.app_bancario_teste.presentation.ui.login.LoginScreen
-import com.example.app_bancario_teste.ui.theme.AppBancarioTesteTheme
+import com.example.app_bancario_teste.presentation.theme.AppBancarioTesteTheme
 
 @Composable
 fun LoadingOverlay(isVisible: Boolean) {

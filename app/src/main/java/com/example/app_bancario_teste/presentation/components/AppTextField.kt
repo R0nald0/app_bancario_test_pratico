@@ -12,7 +12,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.app_bancario_teste.ui.theme.AppBancarioTesteTheme
+import com.example.app_bancario_teste.presentation.theme.AppBancarioTesteTheme
 
 @Composable
 fun AppTextField(
@@ -36,12 +36,11 @@ fun AppTextField(
         placeholder = { Text(label) },
         shape = RoundedCornerShape(15.dp),
         colors = TextFieldDefaults.colors(
-            focusedLabelColor = Color(0xff5C738A),
             disabledIndicatorColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             errorIndicatorColor = Color.Transparent,
-            errorLabelColor = Color.Red,
+
         ),
         supportingText = {
             if (isError && errorText != null) {

@@ -16,46 +16,42 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class ResultLogin()
-class Success(val customer: Customer) : ResultLogin()
-class InitialState : ResultLogin()
-class Loading : ResultLogin()
-class Error (val errorMessage: String) : ResultLogin()
+
 data class UiLoginState(
-    val resultLogin: ResultLogin = InitialState(),
-    val isEmailIValidate : String? = null,
-    val isPasswordIValidate : String? = null,
+    val isEmailIValidate: String? = null,
+    val isPasswordIValidate: String? = null,
     val message: String? = null
 )
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(
+class LoginViewModel @Inject constructor(
     private val validateUseCase: ValidateUseCase,
     private val getUser: GetUser,
 ) : ViewModel() {
     private val _loginUi = MutableStateFlow(UiLoginState())
     var loginUi: StateFlow<UiLoginState> = _loginUi.asStateFlow()
-    private val  _resultLoginState = MutableSharedFlow<ResultLogin>()
-    var  resultLoginState  = _resultLoginState.asSharedFlow()
+    private val _resultLoginState = MutableSharedFlow<ResultLogin>()
+    var resultLoginState = _resultLoginState.asSharedFlow()
 
 
-    fun validateEmail(email: String){
+    fun validateEmail(email: String) {
         val validate = validateUseCase.validate(email, "")
-        if (validate.containsKey("email")){
-          _loginUi.update {
-              it.copy(isEmailIValidate =  validate.getValue("email"))
-          }
-          return
+        if (validate.containsKey("email")) {
+            _loginUi.update {
+                it.copy(isEmailIValidate = validate.getValue("email"))
+            }
+            return
         }
         _loginUi.update {
             it.copy(isEmailIValidate = "")
         }
     }
-    fun validatePassword(password: String){
-        val validate = validateUseCase.validate("",password)
-        if (validate.containsKey("password")){
+
+    fun validatePassword(password: String) {
+        val validate = validateUseCase.validate("", password)
+        if (validate.containsKey("password")) {
             _loginUi.update {
-                it.copy(isPasswordIValidate =  validate.getValue("password"))
+                it.copy(isPasswordIValidate = validate.getValue("password"))
             }
             return
         }
@@ -65,30 +61,22 @@ class AuthViewModel @Inject constructor(
     }
 
     fun login(email: String, password: String) {
-         /*_loginUi.update {
-             it.copy(resultLogin = Loading())
-         }*/
         viewModelScope.launch {
             _resultLoginState.emit(Loading())
             runCatching {
                 getUser()
             }.fold(
-                onSuccess = {costumer ->
-                    _resultLoginState.emit(Success(customer = costumer))
-                    /*Log.i("Info", "login: ${costumer.customerName}")
+                onSuccess = { costumer ->
                     _loginUi.update {
-                        it.copy(
-                             resultLogin = Success(customer = costumer)
-                             )
-                    }*/
+                        it.copy(isPasswordIValidate = null, isEmailIValidate = null, message = null)
+                    }
+                    _resultLoginState.emit(Success(customer = costumer))
                 },
-                onFailure = {error ->
+                onFailure = { error ->
+                    Log.e("repositoryError", "getPayments:${error.message} ", )
+
                     _resultLoginState.emit(Error(errorMessage = "Erro ao buscar dados do usuário"))
 
-                    Log.i("Info", "login: $error")
-                    /*_loginUi.update {
-                        it.copy(resultLogin = Error(errorMessage = "Erro ao buscar dados do usuário"))
-                    }*/
                 }
             )
 

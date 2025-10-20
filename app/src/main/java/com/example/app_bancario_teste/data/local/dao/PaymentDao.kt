@@ -9,7 +9,7 @@ import com.example.app_bancario_teste.data.local.entity.PaymentEntity
 @Dao
 interface PaymentDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun savePayment(vararg paymentEntity: PaymentEntity)
+  suspend fun savePayment(vararg paymentEntity: PaymentEntity) :List<Long>
 
   @Query(value = "SELECT *FROM payment")
   suspend fun fetchAll(): List<PaymentEntity>

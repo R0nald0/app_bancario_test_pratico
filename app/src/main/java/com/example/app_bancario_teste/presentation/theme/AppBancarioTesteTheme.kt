@@ -1,4 +1,4 @@
-package com.example.app_bancario_teste.ui.theme
+package com.example.app_bancario_teste.presentation.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -8,6 +8,9 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.app_bancario_teste.ui.theme.DarkColorScheme
+import com.example.app_bancario_teste.ui.theme.LightColorScheme
+import com.example.app_bancario_teste.ui.theme.Typography
 
 @Composable
 fun AppBancarioTesteTheme(
