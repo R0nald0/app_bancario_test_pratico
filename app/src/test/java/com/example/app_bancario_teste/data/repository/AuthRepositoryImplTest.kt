@@ -87,7 +87,5 @@ class AuthRepositoryImplTest {
         Mockito.verify(prefereceService).readFromPreference(AppConstants.CUSTOMER_PREFERENCE_KEY)
     }
 
-    @After
-    fun tearDown() { }
 
 }

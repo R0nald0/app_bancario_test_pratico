@@ -12,7 +12,6 @@ import com.example.app_bancario_teste.presentation.theme.AppBancarioTesteTheme
 import com.example.app_bancario_teste.presentation.ui.login.LoginScreen
 import com.example.app_bancario_teste.presentation.ui.login.LoginViewModel
 import com.example.app_bancario_teste.presentation.ui.payment.PaymentScreen
-import com.example.app_bancario_teste.presentation.ui.payment.PaymentsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,21 +30,20 @@ class MainActivity : ComponentActivity() {
                         LoginScreen(
                             loginViewModel = hiltViewModel<LoginViewModel>(),
                             onSuccessLogin = { customer ->
-                                navController.navigate("/payments",)
+                                navController.navigate("/payments")
                             }
                         )
                     }
 
                     composable("/payments") {
+
                         PaymentScreen(
-                            paymentsViewModel = hiltViewModel<PaymentsViewModel>(),
                             onBackTap = {
                                 navController.popBackStack()
                             }
                         )
                     }
                 }
-
             }
         }
     }

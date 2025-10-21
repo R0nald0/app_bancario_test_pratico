@@ -13,7 +13,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="savePayment_should_save_a_payment()">
+      <SelectionState runConfigName="Tests in 'com.example.app_bancario_teste.data.dao'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

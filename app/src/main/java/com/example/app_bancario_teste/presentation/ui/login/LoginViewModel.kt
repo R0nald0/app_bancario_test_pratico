@@ -1,9 +1,7 @@
 package com.example.app_bancario_teste.presentation.ui.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.app_bancario_teste.domain.model.Customer
 import com.example.app_bancario_teste.domain.usecase.GetUser
 import com.example.app_bancario_teste.domain.usecase.ValidateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,10 +71,7 @@ class LoginViewModel @Inject constructor(
                     _resultLoginState.emit(Success(customer = costumer))
                 },
                 onFailure = { error ->
-                    Log.e("repositoryError", "getPayments:${error.message} ", )
-
-                    _resultLoginState.emit(Error(errorMessage = "Erro ao buscar dados do usuário"))
-
+                    _resultLoginState.emit(Error(errorMessage = "Erro ao buscar dados do customer"))
                 }
             )
 

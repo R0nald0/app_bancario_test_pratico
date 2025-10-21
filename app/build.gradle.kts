@@ -83,6 +83,8 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.20.0")
     testImplementation("com.google.truth:truth:1.4.5")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.0")
+    //https://github.com/cashapp/turbine
+    testImplementation("app.cash.turbine:turbine:1.2.1")
     // optional - Test helpers
     androidTestImplementation("androidx.room:room-testing:${roomVersion}")
     androidTestImplementation("com.google.truth:truth:1.4.5")
