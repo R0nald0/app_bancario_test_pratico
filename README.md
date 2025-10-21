@@ -17,7 +17,13 @@ O app exibe informações de pagamentos e dados do cliente.
 - Escolha um emulador ou dispositivo físico
 - Clique em Run
 
-Principais tecnologias
+## Para rodar o teste
+ ```bash
+  ./gradlew test
+````  
+   ou clique com o botao direito na pasta test/java/com/example/app_bancario_teste e escolha Run, e/ou também em androidTest/java/com/example/app_bancario_teste e Run
+   
+## Principais tecnologias
  - Kotlin
  - Jetpack Compose
  - MVVM (ViewModel, StateFlow)
